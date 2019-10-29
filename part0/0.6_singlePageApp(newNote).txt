@@ -1,0 +1,14 @@
+title New Note in Single Page Application
+
+note over browser:
+User submits new note
+end note
+
+note over browser:
+Event handler prevents default 
+handling of submission, adds
+new note to note list and 
+rerenders the note list
+end note
+
+browser->server: HTTP POST https://fullstack-exampleapp.herokuapp.com/new_note_spa

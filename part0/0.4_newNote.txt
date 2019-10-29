@@ -1,0 +1,14 @@
+title New Note Creation
+
+browser->server: HTTP POST to https://fullstack-exampleapp.herokuapp.com/new_note
+note over server:
+server appends note to
+note array
+end note
+server-->browser: HTTP Redirect to https://fullstack-exampleapp.herokuapp.com/notes
+browser->server: HTTP GET https://fullstack-exampleapp.herokuapp.com/notes
+server-->browser: HTML-code
+browser->server: HTTP GET https://fullstack-exampleapp.herokuapp.com/main.css
+server-->browser: main.css
+browser->server: HTTP GET https://fullstack-exampleapp.herokuapp.com/main.js
+server-->browser: main.js
