@@ -3,8 +3,8 @@ const app = express()
 const bodyParser = require('body-parser')
 const morgan = require('morgan')
 
+app.use(express.static('build'))
 app.use(bodyParser.json())
-
 morgan.token('data', (req, res) => JSON.stringify(req.body))
 app.use(morgan((tokens, req, res) => {
     const string = [
@@ -17,7 +17,7 @@ app.use(morgan((tokens, req, res) => {
     if (req.method === 'POST') {
         string.push(tokens['data'](req, res))
     }
-    return strings.join(' ')
+    return string.join(' ')
 }))
 
 let persons = [
