@@ -27,9 +27,9 @@ const App = () => {
       const newDetails = { ...updateDetails, number: newNumber }
 
       personService
-        .update(updateDetails.id, newDetails)
+        .update(updateDetails._id, newDetails)
         .then(returnedPerson => {
-          setPersons(persons.map(person => person.id === updateDetails.id
+          setPersons(persons.map(person => person._id === updateDetails._id
             ? returnedPerson
             : person))
           setNewName('')
@@ -41,10 +41,11 @@ const App = () => {
         })
         .catch(error => {
           setClass('notification-red')
-          setMessage(`Information on ${updateDetails.name} has already removed from server`)
+          setMessage(`${error.response.data.error}`)
           setTimeout(() => {
             setMessage(null)
           }, 3500)
+          console.log(error.response.data)
         })
     } else {
       return
@@ -56,11 +57,9 @@ const App = () => {
     if (persons.filter(person => person.name === newName).length > 0) {
       updateNumber()
     } else {
-      const newID = () => '_' + Math.random().toString(36).substr(2, 9);
       const nameObject = {
         name: newName,
         number: newNumber,
-        id: newID(),
       }
 
       personService
@@ -69,10 +68,19 @@ const App = () => {
           setPersons(persons.concat(data))
           setNewName('')
           setNewNumber('')
+          setClass('notification-green')
           setMessage(`Added ${nameObject.name}`)
           setTimeout(() => {
             setMessage(null)
           }, 3500)
+        })
+        .catch(error => {
+          setClass('notification-red')
+          setMessage(`${error.response.data.error}`)
+          setTimeout(() => {
+            setMessage(null)
+          }, 3500)
+          console.log(error.response.data)
         })
     }
   }

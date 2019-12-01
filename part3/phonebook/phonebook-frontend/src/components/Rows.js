@@ -6,10 +6,10 @@ const Rows = ({ persons, setPersons, setMessage, setClass }) => {
     const result = window.confirm(`Delete ${deletePerson.name}?`)
     if (result) {
       const newPersons = persons.filter(person =>
-        person.id !== deletePerson.id
+        person._id !== deletePerson._id
       )
       personService
-        .remove(deletePerson.id, persons)
+        .remove(deletePerson._id, persons)
       setPersons(newPersons)
       setClass('notification-red')
       setMessage(`Removed ${deletePerson.name}`)
@@ -23,7 +23,7 @@ const Rows = ({ persons, setPersons, setMessage, setClass }) => {
 
   return (
     persons.map(person =>
-      <p key={person.id}>{person.name} {person.number}
+      <p key={person._id}>{person.name} {person.number}
         <button onClick={handleClick(person)}>delete</button>
       </p>
     )
