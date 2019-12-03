@@ -10,6 +10,7 @@ University of Helsinki Deep Dive into Web Development exercises
 
 * [ReastJS](https://reactjs.org) - Frontend library
 * [NodeJS](https://nodejs.org) - Backend framework
+* [MongoDB (Atlas)](https://www.mongodb.com/cloud/atlas) - AWS cloud database
 * [Microsoft Visual Studio](https://code.visualstudio.com) - IDE
 
 ## Acknowledgments
