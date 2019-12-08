@@ -1,8 +1,8 @@
-POST http://localhost:3003/api/blogs 
+PUT http://localhost:3003/api/blogs/5dec60542f98aa94e868f269
 Content-Type: application/json
 
 {
-    "title": "Test Title to be updated",
+    "title": "Updated Title",
     "author": "Test Author",
     "url": "www.test-webpage.com",
     "likes": 5
