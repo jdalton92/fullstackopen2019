@@ -19,7 +19,7 @@ const Blog = ({ blog, addLikeHandler, removeBlogHandler, user }) => {
   return (
     <div className="blog-style">
 
-      <div onClick={() => setBlogHidden(!blogHidden)}>
+      <div className="title" onClick={() => setBlogHidden(!blogHidden)}>
         {blog.title} {blog.author}
       </div>
 
