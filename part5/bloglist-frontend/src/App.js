@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react'
 import Notification from './components/Notification'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
@@ -86,9 +86,9 @@ const App = () => {
   }
 
   const logout = () => {
-    localStorage.clear("loggedBlogappUser")
+    localStorage.clear('loggedBlogappUser')
     setUser(null)
-  };
+  }
 
   const blogForm = () => {
     const hideWhenVisible = { display: newNoteVisible ? 'none' : '' }
@@ -100,7 +100,7 @@ const App = () => {
           <form onSubmit={addBlog}>
             <div>
               title:
-        <input
+              <input
                 type="text"
                 value={newTitle}
                 name="Title"
@@ -109,7 +109,7 @@ const App = () => {
             </div>
             <div>
               author:
-        <input
+              <input
                 type="text"
                 value={newAuthor}
                 name="Author"
@@ -118,7 +118,7 @@ const App = () => {
             </div>
             <div>
               url:
-        <input
+              <input
                 type="text"
                 value={newUrl}
                 name="Url"
@@ -170,6 +170,11 @@ const App = () => {
     try {
       await blogService.addLike(blogObject)
       setBlogs(blogs.map(blog => (blog.id === blogObject.id ? blogObject : blog)))
+      setMessageClass('notification-green')
+      setMessage('Blog liked')
+      setTimeout(() => {
+        setMessage(null)
+      }, 5000)
     } catch (exception) {
       setMessageClass('notification-red')
       setMessage(`${exception}`)
@@ -233,4 +238,4 @@ const App = () => {
   )
 }
 
-export default App;
+export default App
