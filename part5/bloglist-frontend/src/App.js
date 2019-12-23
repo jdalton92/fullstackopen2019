@@ -14,6 +14,7 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
+  const [newNoteVisible, setNewNoteVisible] = useState(false)
 
   useEffect(() => {
     blogService
@@ -89,38 +90,52 @@ const App = () => {
     setUser(null)
   };
 
-  const blogForm = () => (
-    <form onSubmit={addBlog}>
+  const blogForm = () => {
+    const hideWhenVisible = { display: newNoteVisible ? 'none' : '' }
+    const showWhenVisible = { display: newNoteVisible ? '' : 'none' }
+
+    return (
       <div>
-        title:
+        <div style={showWhenVisible}>
+          <form onSubmit={addBlog}>
+            <div>
+              title:
         <input
-          type="text"
-          value={newTitle}
-          name="Title"
-          onChange={({ target }) => setNewTitle(target.value)}
-        />
-      </div>
-      <div>
-        author:
+                type="text"
+                value={newTitle}
+                name="Title"
+                onChange={({ target }) => setNewTitle(target.value)}
+              />
+            </div>
+            <div>
+              author:
         <input
-          type="text"
-          value={newAuthor}
-          name="Author"
-          onChange={({ target }) => setNewAuthor(target.value)}
-        />
-      </div>
-      <div>
-        url:
+                type="text"
+                value={newAuthor}
+                name="Author"
+                onChange={({ target }) => setNewAuthor(target.value)}
+              />
+            </div>
+            <div>
+              url:
         <input
-          type="text"
-          value={newUrl}
-          name="Url"
-          onChange={({ target }) => setNewUrl(target.value)}
-        />
+                type="text"
+                value={newUrl}
+                name="Url"
+                onChange={({ target }) => setNewUrl(target.value)}
+              />
+            </div>
+            <button type="submit">create</button>
+          </form>
+          <button onClick={() => setNewNoteVisible(false)}>cancel</button>
+        </div>
+
+        <div style={hideWhenVisible}>
+          <button onClick={() => setNewNoteVisible(true)}>new note</button>
+        </div>
       </div>
-      <button type="submit">create</button>
-    </form>
-  )
+    )
+  }
 
   const addBlog = async (event) => {
     event.preventDefault()
@@ -130,8 +145,10 @@ const App = () => {
         author: newAuthor,
         url: newUrl,
       }
-      const blog = await blogService.create(blogObject)
-      setBlogs(blogs.concat(blog))
+      await blogService.create(blogObject)
+      await blogService
+        .getAll()
+        .then(initialBlogs => setBlogs(initialBlogs))
       setNewTitle('')
       setNewAuthor('')
       setNewUrl('')
@@ -143,6 +160,37 @@ const App = () => {
     } catch (exception) {
       setMessageClass('notification-red')
       setMessage('Invalid blog data')
+      setTimeout(() => {
+        setMessage(null)
+      }, 5000)
+    }
+  }
+
+  const addLikeHandler = async (blogObject) => {
+    try {
+      await blogService.addLike(blogObject)
+      setBlogs(blogs.map(blog => (blog.id === blogObject.id ? blogObject : blog)))
+    } catch (exception) {
+      setMessageClass('notification-red')
+      setMessage(`${exception}`)
+      setTimeout(() => {
+        setMessage(null)
+      }, 5000)
+    }
+  }
+
+  const removeBlogHandler = async (blogObject) => {
+    try {
+      await blogService.deleteBlog(blogObject)
+      setBlogs(blogs.filter(blog => (blog.id !== blogObject.id)))
+      setMessageClass('notification-green')
+      setMessage(`${blogObject.title} removed`)
+      setTimeout(() => {
+        setMessage(null)
+      }, 5000)
+    } catch (exception) {
+      setMessageClass('notification-red')
+      setMessage(`${exception}`)
       setTimeout(() => {
         setMessage(null)
       }, 5000)
@@ -167,15 +215,22 @@ const App = () => {
             {blogForm()}
           </div>
           <div>
-            {blogs.map(blog =>
-              <Blog key={blog.id} blog={blog} />
-            )}
+            {blogs
+              .sort((a, b) => b.likes - a.likes)
+              .map(blog =>
+                <Blog
+                  key={blog.id}
+                  blog={blog}
+                  addLikeHandler={addLikeHandler}
+                  removeBlogHandler={removeBlogHandler}
+                  user={user}
+                />
+              )}
           </div>
         </div>
       }
     </div>
   )
-
 }
 
 export default App;

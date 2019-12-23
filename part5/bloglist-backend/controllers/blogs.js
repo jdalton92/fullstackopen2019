@@ -9,7 +9,7 @@ blogsRouter.get('/', async (request, response) => {
         .find({})
         .populate('user', {
             username: 1,
-            name: 1
+            name: 1,
         })
 
     response.json(blogs.map(b => b.toJSON()))
@@ -49,6 +49,7 @@ blogsRouter.post('/', async (request, response, next) => {
             title: body.title,
             author: body.author,
             url: body.url,
+            user: user._id
         })
 
         if (!blog.title || !blog.url) {
@@ -121,7 +122,7 @@ blogsRouter.put('/:id', async (request, response, next) => {
             likes: body.likes,
         }
 
-        const newBlog = await Blog.fingById(request.params.id)
+        const newBlog = await Blog.findById(request.params.id)
 
         if (newBlog.user.toString() === decodedToken.id) {
             await Blog.findByIdAndUpdate(request.params.id, blog, { new: true })

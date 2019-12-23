@@ -21,4 +21,22 @@ const create = async newObject => {
   return response.data
 }
 
-export default { getAll, create, setToken }
+const deleteBlog = async blogObject => {
+  const config = {
+    headers: { Authorization: token },
+  }
+
+  const response = await axios.delete(`${baseUrl}/${blogObject.id}`, config)
+  return response.data
+}
+
+const addLike = async newObject => {
+  const config = {
+    headers: { Authorization: token },
+  }
+
+  const response = await axios.put(`${baseUrl}/${newObject.id}`, newObject, config)
+  return response.data
+}
+
+export default { getAll, create, addLike, deleteBlog, setToken }

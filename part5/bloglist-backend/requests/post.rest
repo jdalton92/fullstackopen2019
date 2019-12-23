@@ -6,6 +6,5 @@ Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlRlc
     "title": "Test Post with Token",
     "author": "Test Author",
     "url": "www.test-webpage.com",
-    "likes": 5,
-    "user": "5df592e2a372b1829caa728c"
+    "likes": 5
 }
