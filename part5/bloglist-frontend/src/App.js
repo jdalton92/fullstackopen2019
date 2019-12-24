@@ -3,16 +3,17 @@ import Notification from './components/Notification'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import { useField } from './hooks'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [newTitle, setNewTitle] = useState('')
-  const [newAuthor, setNewAuthor] = useState('')
-  const [newUrl, setNewUrl] = useState('')
+  const title = useField('text')
+  const author = useField('text')
+  const url = useField('text')
   const [message, setMessage] = useState(null)
   const [messageClass, setMessageClass] = useState('notification-green')
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
+  const username = useField('text')
+  const password = useField('text')
   const [user, setUser] = useState(null)
   const [newNoteVisible, setNewNoteVisible] = useState(false)
 
@@ -31,29 +32,6 @@ const App = () => {
     }
   }, [])
 
-  const handleLogin = async (event) => {
-    event.preventDefault()
-    try {
-      const user = await loginService.login({
-        username, password,
-      })
-
-      window.localStorage.setItem(
-        'loggedBlogappUser', JSON.stringify(user)
-      )
-      blogService.setToken(user.token)
-      setUser(user)
-      setUsername('')
-      setPassword('')
-    } catch (exception) {
-      setMessageClass('notification-red')
-      setMessage('Wrong credentials')
-      setTimeout(() => {
-        setMessage(null)
-      }, 5000)
-    }
-  }
-
   const loginForm = () => {
     if (user === null) {
       return (
@@ -62,26 +40,40 @@ const App = () => {
           <form onSubmit={handleLogin}>
             <div>
               username
-              <input
-                type="text"
-                value={username}
-                name="Username"
-                onChange={({ target }) => setUsername(target.value)}
-              />
+              <input {...username.bind} />
             </div>
             <div>
               password
-              <input
-                type="password"
-                value={password}
-                name="Password"
-                onChange={({ target }) => setPassword(target.value)}
-              />
+              <input {...password.bind} />
             </div>
             <button type="submit">login</button>
           </form>
         </div>
       )
+    }
+  }
+
+  const handleLogin = async (event) => {
+    event.preventDefault()
+    try {
+      const user = await loginService.login({
+        username: username.bind.value,
+        password: password.bind.value
+      })
+
+      window.localStorage.setItem(
+        'loggedBlogappUser', JSON.stringify(user)
+      )
+      blogService.setToken(user.token)
+      setUser(user)
+      username.reset()
+      password.reset()
+    } catch (exception) {
+      setMessageClass('notification-red')
+      setMessage('Wrong credentials')
+      setTimeout(() => {
+        setMessage(null)
+      }, 5000)
     }
   }
 
@@ -100,30 +92,15 @@ const App = () => {
           <form onSubmit={addBlog}>
             <div>
               title:
-              <input
-                type="text"
-                value={newTitle}
-                name="Title"
-                onChange={({ target }) => setNewTitle(target.value)}
-              />
+              <input {...title.bind} />
             </div>
             <div>
               author:
-              <input
-                type="text"
-                value={newAuthor}
-                name="Author"
-                onChange={({ target }) => setNewAuthor(target.value)}
-              />
+              <input {...author.bind} />
             </div>
             <div>
               url:
-              <input
-                type="text"
-                value={newUrl}
-                name="Url"
-                onChange={({ target }) => setNewUrl(target.value)}
-              />
+              <input {...url.bind} />
             </div>
             <button type="submit">create</button>
           </form>
@@ -141,17 +118,17 @@ const App = () => {
     event.preventDefault()
     try {
       const blogObject = {
-        title: newTitle,
-        author: newAuthor,
-        url: newUrl,
+        title: title.bind.value,
+        author: author.bind.value,
+        url: url.bind.value,
       }
       await blogService.create(blogObject)
       await blogService
         .getAll()
         .then(initialBlogs => setBlogs(initialBlogs))
-      setNewTitle('')
-      setNewAuthor('')
-      setNewUrl('')
+      title.reset()
+      author.reset()
+      url.reset()
       setMessageClass('notification-green')
       setMessage(`A new blog added: ${blogObject.title} by ${blogObject.author}`)
       setTimeout(() => {
