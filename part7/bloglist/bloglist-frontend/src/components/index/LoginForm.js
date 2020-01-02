@@ -1,25 +1,26 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { loginUser, logoutUser } from '../reducers/userReducer'
-import { newNotification } from '../reducers/notificationReducer'
+import { loginUser } from '../../reducers/loginReducer'
+import { newNotification } from '../../reducers/notificationReducer'
+import { Form, Button, Header } from 'semantic-ui-react'
 
 const Login = (props) => {
     const loginForm = () => {
-        if (props.user === null) {
+        if (props.login === null) {
             return (
                 <div>
-                    <h2>Log in to application</h2>
-                    <form onSubmit={handleLogin}>
-                        <div>
+                    <Header as='h2'>Log in to application</Header>
+                    <Form onSubmit={handleLogin}>
+                        <Form.Field>
                             username
                   <input name='username' />
-                        </div>
-                        <div>
+                        </Form.Field>
+                        <Form.Field>
                             password
                   <input name='password' />
-                        </div>
-                        <button type="submit">login</button>
-                    </form>
+                        </Form.Field>
+                        <Button type="submit">login</Button>
+                    </Form>
                 </div>
             )
         }
@@ -36,37 +37,21 @@ const Login = (props) => {
         }
     }
 
-    const logout = () => {
-        props.logoutUser()
-    }
-
-    if (!props.user) {
+    if (!props.login) {
         return loginForm()
     } else {
-        return (
-            <div>
-                <div>
-                    <p>
-                        {props.user.name} logged in
-                        <button onClick={logout} type="logout">
-                            logout
-                        </button>
-                    </p>
-                </div>
-            </div>
-        )
+        return null
     }
 }
 
 const mapStateToProps = (state) => {
     return {
-        user: state.user,
+        login: state.login,
     }
 }
 
 const mapDispatchToProps = {
     loginUser,
-    logoutUser,
     newNotification
 }
 

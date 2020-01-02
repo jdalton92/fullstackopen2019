@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import { connect } from 'react-redux'
-import { newNotification } from '../reducers/notificationReducer'
-import { createBlog } from '../reducers/blogReducer'
+import { Form, Button } from 'semantic-ui-react'
+import { newNotification } from '../../reducers/notificationReducer'
+import { createBlog } from '../../reducers/blogReducer'
 
 const BlogForm = (props) => {
     const [newNoteVisible, setNewNoteVisible] = useState(false)
@@ -13,26 +14,26 @@ const BlogForm = (props) => {
         return (
             <div>
                 <div style={showWhenVisible}>
-                    <form onSubmit={addBlog}>
-                        <div>
+                    <Form onSubmit={addBlog}>
+                        <Form.Field>
                             title:
                   <input name='title' />
-                        </div>
-                        <div>
+                        </Form.Field>
+                        <Form.Field>
                             author:
                   <input name='author' />
-                        </div>
-                        <div>
+                        </Form.Field>
+                        <Form.Field>
                             url:
                   <input name='url' />
-                        </div>
-                        <button type="submit">create</button>
-                    </form>
-                    <button onClick={() => setNewNoteVisible(false)}>cancel</button>
+                        </Form.Field>
+                        <Button type="submit">create</Button>
+                    </Form>
+                    <Button onClick={() => setNewNoteVisible(false)}>cancel</Button>
                 </div>
 
                 <div style={hideWhenVisible}>
-                    <button onClick={() => setNewNoteVisible(true)}>new blog</button>
+                    <Button onClick={() => setNewNoteVisible(true)}>new blog</Button>
                 </div>
             </div>
         )
@@ -58,7 +59,7 @@ const BlogForm = (props) => {
     }
 
     // if user logged in show 'new blog' button
-    if (props.user) {
+    if (props.login) {
         return newBlogForm()
     }
     // if no user logged in then hide
@@ -68,7 +69,7 @@ const BlogForm = (props) => {
 const mapStateToProps = (state) => {
     return {
         blogs: state.blogs,
-        user: state.user,
+        login: state.login,
     }
 }
 

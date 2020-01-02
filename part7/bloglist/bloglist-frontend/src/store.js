@@ -4,13 +4,15 @@ import thunk from 'redux-thunk'
 
 import blogReducer from './reducers/blogReducer'
 import userReducer from './reducers/userReducer'
+import loginReducer from './reducers/loginReducer'
 import filterReducer from './reducers/filterReducer'
 import notificationReducer from './reducers/notificationReducer'
 
 const reducer = combineReducers({
     blogs: blogReducer,
     filter: filterReducer,
-    user: userReducer,
+    login: loginReducer,
+    users: userReducer,
     notification: notificationReducer
 })
 
