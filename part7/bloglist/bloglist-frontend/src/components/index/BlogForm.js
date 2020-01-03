@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import { Form, Button } from 'semantic-ui-react'
 import { newNotification } from '../../reducers/notificationReducer'
 import { createBlog } from '../../reducers/blogReducer'
+import { getAllUsers } from '../../reducers/userReducer'
 
 const BlogForm = (props) => {
     const [newNoteVisible, setNewNoteVisible] = useState(false)
@@ -17,15 +18,15 @@ const BlogForm = (props) => {
                     <Form onSubmit={addBlog}>
                         <Form.Field>
                             title:
-                  <input name='title' />
+                  <input id='title' name='title' />
                         </Form.Field>
                         <Form.Field>
                             author:
-                  <input name='author' />
+                  <input id='author' name='author' />
                         </Form.Field>
                         <Form.Field>
                             url:
-                  <input name='url' />
+                  <input id='url' name='url' />
                         </Form.Field>
                         <Button className='button submit-button' type="submit">create</Button>
                     </Form>
@@ -54,7 +55,7 @@ const BlogForm = (props) => {
             event.target.author.value = ''
             event.target.url.value = ''
         } catch (e) {
-            props.newNotification(e)
+            props.newNotification('error')
         }
     }
 
@@ -76,6 +77,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = {
     createBlog,
     newNotification,
+    getAllUsers,
 }
 
 export default connect(

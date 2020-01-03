@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import { Table } from 'semantic-ui-react'
 
 const Users = (props) => {
+
     return (
         <div>
             <h1>Users</h1>
@@ -18,8 +19,8 @@ const Users = (props) => {
                     {props.users
                         .map(user => (
                             <Table.Row key={user.id}>
-                                <Table.Cell><Link to={`/users/${user.id}`} >{user.username}</Link></Table.Cell>
-                                <Table.Cell>{user.blogs.length}</Table.Cell>
+                                <Table.Cell><Link to={`/users/${user.id}`} id={user.username}>{user.username}</Link></Table.Cell>
+                                <Table.Cell>{props.users.filter(u => u.id === user.id)[0].blogs.length}</Table.Cell>
                             </Table.Row>
                         ))
                     }

@@ -63,7 +63,7 @@ let Blog = (props) => {
             <Header as='h2'>comments</Header>
             <Form onSubmit={newComment}>
                 <Form.Field>
-                    <input name='comment'></input>
+                    <input id='comment' name='comment'></input>
                 </Form.Field>
                 <Button type='submit'>add comment</Button>
             </Form>
