@@ -1,8 +1,9 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { Link, withRouter } from 'react-router-dom'
+import { NavLink, withRouter } from 'react-router-dom'
 import { logoutUser } from '../../reducers/loginReducer'
 import { Button } from 'semantic-ui-react'
+import './navigation.css'
 
 let Navigation = (props) => {
     const logout = () => {
@@ -11,19 +12,17 @@ let Navigation = (props) => {
     }
 
     return (
-        <>
-            {props.login
-                ? <>
-                    <Link to='/'>blogs</Link>
-                    <Link to='/users'>users</Link>
-                    <em>{props.login.name} logged in </em>
-                    <Button onClick={logout} type="logout">
-                        logout
-                    </Button>
-                </>
-                : null
-            }
-        </>
+        <nav className='nav-header'>
+            <div className='nav-links'>
+                <NavLink to='/' activeClassName='nav-link blogs'>blogs</NavLink>
+            </div>
+            <div className='nav-links'>
+                <NavLink to='/users' activeClassName='nav-link users'>users</NavLink>
+            </div>
+            <div className='nav-links'>
+                {props.login.name} logged in <Button onClick={logout} type="logout">logout</Button>
+            </div>
+        </nav>
     )
 }
 

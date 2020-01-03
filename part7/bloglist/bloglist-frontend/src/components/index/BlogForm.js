@@ -12,7 +12,7 @@ const BlogForm = (props) => {
         const showWhenVisible = { display: newNoteVisible ? '' : 'none' }
 
         return (
-            <div>
+            <div className='blog-form'>
                 <div style={showWhenVisible}>
                     <Form onSubmit={addBlog}>
                         <Form.Field>
@@ -27,9 +27,9 @@ const BlogForm = (props) => {
                             url:
                   <input name='url' />
                         </Form.Field>
-                        <Button type="submit">create</Button>
+                        <Button className='button submit-button' type="submit">create</Button>
                     </Form>
-                    <Button onClick={() => setNewNoteVisible(false)}>cancel</Button>
+                    <Button className='button cancel-button' onClick={() => setNewNoteVisible(false)}>cancel</Button>
                 </div>
 
                 <div style={hideWhenVisible}>

@@ -50,10 +50,15 @@ const App = (props) => {
   }, [])
 
   return (
-    <Container>
-      <div>
-        <Router>
-          <Navigation />
+    <>
+      <Router>
+        <div>
+          {props.login
+            ? <Navigation />
+            : null
+          }
+        </div>
+        <Container>
           <Header as='h1'>blog app</Header>
           <Notification />
           <Route exact path='/' render={() =>
@@ -80,9 +85,9 @@ const App = (props) => {
               ? <User user={props.users.find(u => u.id === match.params.id)} />
               : <Redirect to='/' />
           } />
-        </Router>
-      </div>
-    </Container>
+        </Container>
+      </Router>
+    </>
   )
 }
 

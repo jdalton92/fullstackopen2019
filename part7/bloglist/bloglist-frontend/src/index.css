@@ -12,26 +12,6 @@ code {
     monospace;
 }
 
-.notification-green {
-  color: green;
-  background: lightgrey;
-  font-size: 20px;
-  border-style: solid;
-  border-radius: 5px;
-  padding: 10px;
-  margin-bottom: 10px;
-}
-
-.notification-red {
-  color: red;
-  background: lightgrey;
-  font-size: 20px;
-  border-style: solid;
-  border-radius: 5px;
-  padding: 10px;
-  margin-bottom: 10px;
-}
-
 .blog-style {
   padding-top: 10px;
   padding-left: 2px;
@@ -40,3 +20,13 @@ code {
   border-color: black;
   margin-bottom: 5px
 }
+
+.blog-form {
+  margin: 2px;
+}
+
+.ui.button.button {
+  margin: 3px;
+}
+
+
