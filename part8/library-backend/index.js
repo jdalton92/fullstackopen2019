@@ -128,8 +128,12 @@ const resolvers = {
         allBooks: (root, args) => (
             books.filter(b =>
                 args.author
-                    ? b.author === args.author && b.genres.includes(args.genre)
-                    : b.genres.includes(args.genre)
+                    ? args.genre
+                        ? b.author === args.author && b.genres.includes(args.genre)
+                        : b.author === args.author
+                    : args.genre
+                        ? b.genres.includes(args.genre)
+                        : b
             )
         ),
         allAuthors: () => authors.map(a => ({
@@ -157,7 +161,8 @@ const resolvers = {
         editAuthor: (root, args) => {
             const authorToUpdate = authors.find(a => a.name === args.name)
             if (authorToUpdate) {
-                return { ...authorToUpdate, born: args.setBornTo }
+                authorToUpdate.born = args.setBornTo
+                return authorToUpdate
             }
             return null
         }
