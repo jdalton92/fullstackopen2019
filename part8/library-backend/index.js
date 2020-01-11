@@ -11,7 +11,7 @@ const JWT_SECRET = process.env.JWT_SECRET
 
 const MONGODB_URI = process.env.MONGODB_URI
 
-console.log('commecting to', MONGODB_URI)
+console.log('connecting to', MONGODB_URI)
 
 mongoose.connect(MONGODB_URI, {
     useNewUrlParser: true,
@@ -108,6 +108,9 @@ const resolvers = {
                     .populate('author')
             }
             return Book.find({}).populate('author')
+        },
+        allAuthors: (root, args) => {
+            return Author.find({}).populate('books')
         },
         me: (root, args, context) => {
             return context.currentUser
