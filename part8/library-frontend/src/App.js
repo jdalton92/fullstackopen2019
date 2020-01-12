@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { gql } from 'apollo-boost'
-import { useQuery, useMutation, useApolloClient } from '@apollo/react-hooks'
+import { useQuery, useMutation, useSubscription, useApolloClient } from '@apollo/react-hooks'
 
 import LoginForm from './components/LoginForm'
 import Authors from './components/Authors'
@@ -8,12 +8,25 @@ import Books from './components/Books'
 import NewBook from './components/NewBook'
 import Recommend from './components/Recommend'
 
+const BOOK_DETAILS = gql`
+  fragment BookDetails on Book {
+    title
+    author {
+      name
+    }
+    published
+    genres
+    id
+  }
+`
+
 const ALL_AUTHORS = gql`
   {
     allAuthors  {
       name
       born
       bookCount
+      id
     }
   }
 `
@@ -59,7 +72,6 @@ const EDIT_AUTHOR = gql`
       name
       born
       bookCount
-      id
     }
   }
 `
@@ -72,13 +84,22 @@ const LOGIN = gql`
   }
 `
 
-export const ME = gql`
-    query me {
-        me {
-            favoriteGenre
-            username
-        }
+const BOOK_ADDED = gql`
+  subscription {
+    bookAdded {
+      ...BookDetails
     }
+  }
+  ${BOOK_DETAILS}
+  `
+
+export const ME = gql`
+query me {
+  me {
+    favoriteGenre
+    username
+  }
+}
 `
 
 const App = () => {
@@ -89,6 +110,13 @@ const App = () => {
   useEffect(() => {
     setToken(localStorage.getItem('library-user-token'))
   }, [])
+
+  const notify = (message) => {
+    setErrorMessage(message)
+    setTimeout(() => {
+      setErrorMessage(null)
+    }, 10000)
+  }
 
   const handleError = (error) => {
     setErrorMessage(error.graphQLErrors[0].message)
@@ -102,12 +130,7 @@ const App = () => {
   const [addBook] = useMutation(CREATE_BOOK, {
     onError: handleError,
     update: (store, response) => {
-      const dataInStore = store.readQuery({ query: GET_BOOKS })
-      dataInStore.allBooks.push(response.data.addBook)
-      store.writeQuery({
-        query: GET_BOOKS,
-        data: dataInStore
-      })
+      updateCacheWith(response.data.addBook)
     }
   })
   const [editAuthor] = useMutation(EDIT_AUTHOR, {
@@ -118,13 +141,33 @@ const App = () => {
     onError: handleError
   })
 
+  useSubscription(BOOK_ADDED, {
+    onSubscriptionData: ({ subscriptionData }) => {
+      const addedBook = subscriptionData.data.bookAdded
+      notify(`${addedBook.title} added`)
+      updateCacheWith(addedBook)
+    }
+  })
+
+  const updateCacheWith = (addedBook) => {
+    const includedIn = (set, object) => set.map(b => b.id).includes(object.id)
+    const dataInStore = client.readQuery({ query: GET_BOOKS })
+    if (!includedIn(dataInStore.allBooks, addedBook)) {
+      dataInStore.allBooks.push(addedBook)
+      client.writeQuery({
+        query: GET_BOOKS,
+        data: dataInStore
+      })
+    }
+  }
+
   const logout = () => {
     setToken(null)
     localStorage.clear()
     client.resetStore()
   }
 
-  const errorNotification = () => errorMessage &&
+  const notification = () => errorMessage &&
     <div style={{ color: 'red' }}>
       {errorMessage}
     </div>
@@ -132,7 +175,7 @@ const App = () => {
   if (!token) {
     return (
       <div>
-        {errorNotification()}
+        {notification()}
         <LoginForm login={login} setToken={(token) => setToken(token)} />
       </div>
     )
@@ -140,7 +183,7 @@ const App = () => {
 
   return (
     <div>
-      {errorNotification()}
+      {notification()}
       <div>
         <button onClick={() => setPage('authors')}>authors</button>
         <button onClick={() => setPage('books')}>books</button>
