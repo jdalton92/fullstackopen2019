@@ -36,9 +36,9 @@ const CREATE_BOOK = gql`
   }
 `
 
-const ALL_BOOKS = gql`
-  {
-    allBooks  {
+export const GET_BOOKS = gql`
+  query getBooks($genre: String) {
+    allBooks(genre: $genre) {
       title
       author {
         name
@@ -72,11 +72,11 @@ const LOGIN = gql`
   }
 `
 
-const ME = gql`
+export const ME = gql`
     query me {
         me {
-            username
             favoriteGenre
+            username
         }
     }
 `
@@ -98,21 +98,25 @@ const App = () => {
   }
 
   const client = useApolloClient()
-
   const authors = useQuery(ALL_AUTHORS)
-  const books = useQuery(ALL_BOOKS)
   const [addBook] = useMutation(CREATE_BOOK, {
     onError: handleError,
-    refetchQueries: [{ query: ALL_AUTHORS }]
+    update: (store, response) => {
+      const dataInStore = store.readQuery({ query: GET_BOOKS })
+      dataInStore.allBooks.push(response.data.addBook)
+      store.writeQuery({
+        query: GET_BOOKS,
+        data: dataInStore
+      })
+    }
   })
   const [editAuthor] = useMutation(EDIT_AUTHOR, {
     onError: handleError,
-    refetchQueries: [{ query: ALL_AUTHORS }, { query: ALL_BOOKS }]
+    refetchQueries: [{ query: ALL_AUTHORS }, { query: GET_BOOKS }]
   })
   const [login] = useMutation(LOGIN, {
     onError: handleError
   })
-  const me = useQuery(ME)
 
   const logout = () => {
     setToken(null)
@@ -156,7 +160,6 @@ const App = () => {
 
       <Books
         show={page === 'books'}
-        result={books}
       />
 
       <NewBook
@@ -166,8 +169,6 @@ const App = () => {
 
       <Recommend
         show={page === 'recommend'}
-        books={books}
-        me={me}
       />
 
     </div>

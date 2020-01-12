@@ -1,36 +1,37 @@
 import React, { useState, useEffect } from 'react'
+import { useApolloClient } from '@apollo/react-hooks'
+import { GET_BOOKS, ME } from '../App'
+
 
 const Recommend = (props) => {
+    const client = useApolloClient()
     const [filterBooks, setFilter] = useState([])
+    const [genre, setGenre] = useState(null)
     useEffect(() => {
-        if (props.books.data && props.me.data) {
-            setFilter(props.books.data.allBooks.filter(b =>
-                b.genres.includes(props.me.data.me.favoriteGenre)
-            ))
-        }
-    }, [props.books.data, props.me.data])
+        recommendedData()
+    }, [genre])
+
+    const recommendedData = async () => {
+        const me = await client.query({ query: ME })
+        setGenre(me.data.me.favoriteGenre)
+        const books = await client.query({
+            query: GET_BOOKS,
+            variables: {
+                genre
+            }
+        })
+        setFilter(books.data.allBooks)
+    }
 
     if (!props.show) {
         return null
     }
 
-    if (props.books.loading) {
-        return <div>loading...</div>
-    }
-
-    const newBookList = props.books({
-        variables: {
-            genre: props.me.data.me.favoriteGenre
-        }
-    })
-
-    console.log('newbooklist', newBookList)
-
     return (
         <div>
             <h2>recommendations</h2>
 
-            <p>books based on your favourite genre <b>{props.me.data.me.favoriteGenre}</b></p>
+            <p>books based on your favourite genre <b>{genre}</b></p>
             <table>
                 <tbody>
                     <tr>

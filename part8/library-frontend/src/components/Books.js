@@ -1,24 +1,30 @@
 import React, { useState, useEffect } from 'react'
+import { useApolloClient } from '@apollo/react-hooks'
+import { GET_BOOKS } from '../App'
 
 const Books = (props) => {
+  const client = useApolloClient(GET_BOOKS)
   const [genre, setGenre] = useState(null)
   const [genres, setGenres] = useState([])
+  const [books, setBooks] = useState({})
 
   useEffect(() => {
-    if (!props.result.loading) {
-      setGenres(Array.from(new Set(props.result.data.allBooks.map(b => b.genres).flat())))
+    const filterData = async () => {
+      const allBooks = await client.query({ query: GET_BOOKS })
+      setGenres(Array.from(new Set(allBooks.data.allBooks.map(b => b.genres).flat())))
+      if (genre) {
+        setBooks(allBooks.data.allBooks.filter(b => b.genres.includes(genre)))
+      } else {
+        setBooks(allBooks.data.allBooks)
+      }
+
     }
-  }, [props.result.data, props.result.loading])
+    filterData()
+  }, [genre])
 
   if (!props.show) {
     return null
   }
-
-  if (props.result.loading) {
-    return <div>loading...</div>
-  }
-
-  const books = props.result.data.allBooks
 
   return (
     <div>
